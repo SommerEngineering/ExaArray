@@ -8,7 +8,7 @@
         <Company>Thorsten Sommer</Company>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageProjectUrl>https://code.tsommer.org/thorsten/ExaArray</PackageProjectUrl>
-        <PackageLicenseUrl>https://code.tsommer.org/thorsten/ExaArray/src/branch/main/LICENSE</PackageLicenseUrl>
+        <License>https://code.tsommer.org/thorsten/ExaArray/src/branch/main/LICENSE</License>
         <RepositoryUrl>https://code.tsommer.org/thorsten/ExaArray</RepositoryUrl>
     </PropertyGroup>
 

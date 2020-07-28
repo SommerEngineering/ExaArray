@@ -3,8 +3,13 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <RootNamespace>Exa</RootNamespace>
+        <PackageId>ExaArray</PackageId>
         <Authors>Thorsten Sommer</Authors>
         <Company>Thorsten Sommer</Company>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageProjectUrl>https://code.tsommer.org/thorsten/ExaArray</PackageProjectUrl>
+        <PackageLicenseUrl>https://code.tsommer.org/thorsten/ExaArray/src/branch/main/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://code.tsommer.org/thorsten/ExaArray</RepositoryUrl>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

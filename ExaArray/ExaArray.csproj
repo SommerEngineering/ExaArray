@@ -8,7 +8,7 @@
         <Company>Thorsten Sommer</Company>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageProjectUrl>https://code.tsommer.org/thorsten/ExaArray</PackageProjectUrl>
-        <License>BSD-3-Clause-Attribution</License>
+        <PackageLicenseExpression>BSD-3-Clause-Attribution</PackageLicenseExpression>
         <RepositoryUrl>https://code.tsommer.org/thorsten/ExaArray</RepositoryUrl>
     </PropertyGroup>
 

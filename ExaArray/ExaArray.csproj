@@ -7,4 +7,12 @@
         <Company>Thorsten Sommer</Company>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <DocumentationFile>bin\Debug\ExaArray.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <DocumentationFile>bin\Release\ExaArray.xml</DocumentationFile>
+    </PropertyGroup>
+
 </Project>

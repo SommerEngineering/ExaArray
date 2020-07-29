@@ -83,6 +83,14 @@ namespace ExaArrayTests
                 var sum2 = exaA.Items().Aggregate<byte, ulong>(0, (current, item) => current + item);
                 Assert.That(sum1, Is.EqualTo(sum2));
             }
+            
+            [Test]
+            public void Using5Billion01()
+            {
+                var exaA = new ExaArray1D<byte>();
+                exaA.Extend(5_000_000_000);
+                Assert.That(exaA.Length, Is.EqualTo(5_000_000_000));
+            }
         }
     }
 }

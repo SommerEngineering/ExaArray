@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -90,6 +91,35 @@ namespace ExaArrayTests
                 var exaA = new ExaArray1D<byte>();
                 exaA.Extend(5_000_000_000);
                 Assert.That(exaA.Length, Is.EqualTo(5_000_000_000));
+            }
+
+            [Test]
+            public void TestPerformance01()
+            {
+                var exaMaxElements = new ExaArray1D<byte>(Strategy.MAX_ELEMENTS);
+                exaMaxElements.Extend(5_000_000_000);
+                
+                var t1 = new Stopwatch();
+                t1.Start();
+
+                for (ulong n = 0; n < 100_000_000; n++)
+                    exaMaxElements[n] = 0x55;
+                t1.Stop();
+                
+                TestContext.WriteLine($"Performing 100M assignments took {t1.ElapsedMilliseconds} ms by means of the max. elements strategy.");
+                exaMaxElements = null;
+                
+                var exaMaxPerformance = new ExaArray1D<byte>(Strategy.MAX_PERFORMANCE);
+                exaMaxPerformance.Extend(5_000_000_000);
+                
+                var t2 = new Stopwatch();
+                t2.Start();
+
+                for (ulong n = 0; n < 100_000_000; n++)
+                    exaMaxPerformance[n] = 0x55;
+                t2.Stop();
+                
+                TestContext.WriteLine($"Performing 100M assignments took {t2.ElapsedMilliseconds} ms by means of the max. performance strategy.");
             }
         }
     }

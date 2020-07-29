@@ -92,6 +92,19 @@ namespace ExaArrayTests
                 exaA.Extend(5_000_000_000);
                 Assert.That(exaA.Length, Is.EqualTo(5_000_000_000));
             }
+            
+            [Test]
+            public void TestStrategies01()
+            {
+                var exaA = new ExaArray1D<byte>();
+                Assert.That(exaA.OptimizationStrategy, Is.EqualTo(Strategy.MAX_PERFORMANCE));
+                
+                exaA = new ExaArray1D<byte>(Strategy.MAX_PERFORMANCE);
+                Assert.That(exaA.OptimizationStrategy, Is.EqualTo(Strategy.MAX_PERFORMANCE));
+                
+                exaA = new ExaArray1D<byte>(Strategy.MAX_ELEMENTS);
+                Assert.That(exaA.OptimizationStrategy, Is.EqualTo(Strategy.MAX_ELEMENTS));
+            }
 
             [Test]
             public void TestPerformance01()

@@ -96,30 +96,43 @@ namespace ExaArrayTests
             [Test]
             public void TestPerformance01()
             {
+                var t1Times = new long[10];
+                var t2Times = new long[10];
+                
                 var exaMaxElements = new ExaArray1D<byte>(Strategy.MAX_ELEMENTS);
                 exaMaxElements.Extend(5_000_000_000);
-                
-                var t1 = new Stopwatch();
-                t1.Start();
 
-                for (ulong n = 0; n < 100_000_000; n++)
-                    exaMaxElements[n] = 0x55;
-                t1.Stop();
-                
-                TestContext.WriteLine($"Performing 100M assignments took {t1.ElapsedMilliseconds} ms by means of the max. elements strategy.");
+                // Take 10 samples:
+                for (var i = 0; i < 10; i++)
+                {
+                    var t1 = new Stopwatch();
+                    t1.Start();
+
+                    for (ulong n = 0; n < 100_000_000; n++)
+                        exaMaxElements[n] = 0x55;
+                    t1.Stop();
+                    t1Times[i] = t1.ElapsedMilliseconds;
+                }
+
+                TestContext.WriteLine($"Performing 100M assignments took {t1Times.Average()} ms (average) by means of the max. elements strategy (min={t1Times.Min()} ms, max={t1Times.Max()} ms)");
                 exaMaxElements = null;
                 
                 var exaMaxPerformance = new ExaArray1D<byte>(Strategy.MAX_PERFORMANCE);
                 exaMaxPerformance.Extend(5_000_000_000);
                 
-                var t2 = new Stopwatch();
-                t2.Start();
+                // Take 10 samples:
+                for (var i = 0; i < 10; i++)
+                {
+                    var t2 = new Stopwatch();
+                    t2.Start();
 
-                for (ulong n = 0; n < 100_000_000; n++)
-                    exaMaxPerformance[n] = 0x55;
-                t2.Stop();
-                
-                TestContext.WriteLine($"Performing 100M assignments took {t2.ElapsedMilliseconds} ms by means of the max. performance strategy.");
+                    for (ulong n = 0; n < 100_000_000; n++)
+                        exaMaxPerformance[n] = 0x55;
+                    t2.Stop();
+                    t2Times[i] = t2.ElapsedMilliseconds;
+                }
+
+                TestContext.WriteLine($"Performing 100M assignments took {t2Times.Average()} ms (average) by means of the max. performance strategy (min={t2Times.Min()} ms, max={t2Times.Max()} ms)");
             }
         }
     }

@@ -32,9 +32,6 @@ namespace Exa
         /// The total number of possible elements, when using the optimization strategy for max. performance. This is the default.
         /// </summary>
         public const ulong MAX_NUMBER_ELEMENTS_PERFORMANCE = 1_152_921_504_606_850_000;
-
-        private readonly ulong maxCapacityArray;
-        private readonly ulong maxNumberElements;
         
         /// <summary>
         /// Gets the configured optimization strategy.
@@ -43,25 +40,22 @@ namespace Exa
         
         // Chunk storage:
         private T[][] chunks = new T[1][];
+        
+        // Max. array and chunk capacity:
+        private readonly uint maxArrayCapacity;
+        
+        // Max. number elements:
+        private readonly ulong maxElements;
 
         /// <summary>
         /// Creates an empty one-dimensional exa-scale array.
         /// </summary>
         public ExaArray1D(Strategy strategy = Strategy.MAX_PERFORMANCE)
         {
-            this.OptimizationStrategy = strategy;
             this.chunks[0] = new T[0];
-
-            if (this.OptimizationStrategy == Strategy.MAX_PERFORMANCE)
-            {
-                this.maxCapacityArray = MAX_CAPACITY_ARRAY_PERFORMANCE;
-                this.maxNumberElements = MAX_NUMBER_ELEMENTS_PERFORMANCE;
-            }
-            else
-            {
-                this.maxCapacityArray = MAX_CAPACITY_ARRAY;
-                this.maxNumberElements = MAX_NUMBER_ELEMENTS;
-            }
+            this.OptimizationStrategy = strategy;
+            this.maxElements = this.OptimizationStrategy == Strategy.MAX_PERFORMANCE ? MAX_NUMBER_ELEMENTS_PERFORMANCE : MAX_NUMBER_ELEMENTS;
+            this.maxArrayCapacity = this.OptimizationStrategy == Strategy.MAX_PERFORMANCE ? MAX_CAPACITY_ARRAY_PERFORMANCE : MAX_CAPACITY_ARRAY;
         }
 
         /// <summary>
@@ -81,15 +75,15 @@ namespace Exa
         /// <c>extendBy</c> argument exceeds the limit of 4,607,183,514,018,780,000 elements.</exception>
         public void Extend(ulong extendBy = 1)
         {
-            if(extendBy > this.maxNumberElements || this.Length + extendBy >= this.maxNumberElements)
-                throw new ArgumentOutOfRangeException($"It is not possible to extend more than {this.maxNumberElements} elements.");
-            
+            if (extendBy > this.maxElements || this.Length + extendBy >= this.maxElements)
+                throw new ArgumentOutOfRangeException($"It is not possible to extend more than {this.maxElements} elements.");
+
             this.Length += extendBy;
-            var availableInCurrentChunk = this.maxCapacityArray - (ulong) (this.chunks[^1]?.Length ?? 0);
+            var availableInCurrentChunk = this.maxArrayCapacity - (ulong) (this.chunks[^1]?.Length ?? 0);
             if (extendBy >= (ulong)availableInCurrentChunk)
             {
                 // Extend the current chunk to its max:
-                var extendedInner = new T[this.maxCapacityArray];
+                var extendedInner = new T[this.maxArrayCapacity];
                 Array.Copy(this.chunks[^1], extendedInner, this.chunks[^1].Length);
                 this.chunks[^1] = extendedInner;
 
@@ -102,7 +96,7 @@ namespace Exa
 
                 do
                 {
-                    ulong allocating = leftOver >= this.maxCapacityArray ? this.maxCapacityArray : leftOver;
+                    ulong allocating = leftOver >= this.maxArrayCapacity ? this.maxArrayCapacity : leftOver;
                     leftOver -= allocating;
                     
                     // First, we allocate space for the new chunk:
@@ -145,21 +139,45 @@ namespace Exa
         {
             get
             {
-                if(index >= this.maxNumberElements)
+                if(index >= this.maxElements)
                     throw new IndexOutOfRangeException();
+
+                int chunkIndex = -1;
+                int elementIndex = -1;
+                switch (this.OptimizationStrategy)
+                {
+                    case Strategy.MAX_PERFORMANCE:
+                        chunkIndex = (int) (index / MAX_CAPACITY_ARRAY_PERFORMANCE);
+                        elementIndex = (int) (index - (ulong) chunkIndex * MAX_CAPACITY_ARRAY_PERFORMANCE);
+                        break;
+                    case Strategy.MAX_ELEMENTS:
+                        chunkIndex = (int) (index / MAX_CAPACITY_ARRAY);
+                        elementIndex = (int) (index - (ulong) chunkIndex * MAX_CAPACITY_ARRAY);
+                        break;
+                }
                 
-                int chunkIndex = (int) (index / this.maxCapacityArray);
-                int elementIndex = (int) (index - (ulong) chunkIndex * this.maxCapacityArray);
                 return this.chunks[chunkIndex][elementIndex];
             }
 
             set
             {
-                if(index >= this.maxNumberElements)
+                if(index >= this.maxElements)
                     throw new IndexOutOfRangeException();
                 
-                int chunkIndex = (int) (index / this.maxCapacityArray);
-                int elementIndex = (int) (index - (ulong) chunkIndex * this.maxCapacityArray);
+                int chunkIndex = -1;
+                int elementIndex = -1;
+                switch (this.OptimizationStrategy)
+                {
+                    case Strategy.MAX_PERFORMANCE:
+                        chunkIndex = (int) (index / MAX_CAPACITY_ARRAY_PERFORMANCE);
+                        elementIndex = (int) (index - (ulong) chunkIndex * MAX_CAPACITY_ARRAY_PERFORMANCE);
+                        break;
+                    case Strategy.MAX_ELEMENTS:
+                        chunkIndex = (int) (index / MAX_CAPACITY_ARRAY);
+                        elementIndex = (int) (index - (ulong) chunkIndex * MAX_CAPACITY_ARRAY);
+                        break;
+                }
+                
                 if (chunkIndex >= this.chunks.Length || elementIndex >= this.chunks[chunkIndex].Length)
                     throw new IndexOutOfRangeException();
 

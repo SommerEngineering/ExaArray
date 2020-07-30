@@ -7,7 +7,7 @@
         <Authors>Thorsten Sommer</Authors>
         <Company>Thorsten Sommer</Company>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageProjectUrl>https://code.tsommer.org/thorsten/ExaArray</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/SommerEngineering/ExaArray</PackageProjectUrl>
         <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
         <RepositoryUrl>https://code.tsommer.org/thorsten/ExaArray</RepositoryUrl>
         <PackageVersion>1.1.1</PackageVersion>

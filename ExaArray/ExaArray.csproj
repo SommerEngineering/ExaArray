@@ -10,9 +10,9 @@
         <PackageProjectUrl>https://github.com/SommerEngineering/ExaArray</PackageProjectUrl>
         <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
         <RepositoryUrl>https://code.tsommer.org/thorsten/ExaArray</RepositoryUrl>
-        <PackageVersion>1.1.1</PackageVersion>
-        <AssemblyVersion>1.1.1</AssemblyVersion>
-        <FileVersion>1.1.1</FileVersion>
+        <PackageVersion>1.2.0</PackageVersion>
+        <AssemblyVersion>1.2.0</AssemblyVersion>
+        <FileVersion>1.2.0</FileVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

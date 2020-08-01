@@ -528,6 +528,20 @@ namespace ExaArrayTests
                 Assert.That(next[next.Length - 1 - 1], Is.EqualTo(exPerf[3 * MAX - 1 + 1]));
                 Assert.That(next[next.Length - 1 - 0], Is.EqualTo(exPerf[3 * MAX - 1 + 2]));
             }
+            
+            [Test]
+            [Category("normal")]
+            [Category("cover")]
+            public void CreateFromRange010()
+            {
+                const uint MAX = 1_073_741_824;
+                
+                var exPerf = new ExaArray1D<byte>(Strategy.MAX_PERFORMANCE);
+                exPerf.Extend(3 * MAX); // more than one chunk
+                
+                var next = ExaArray1D<byte>.CreateFrom(exPerf, 0, exPerf.Length - 1);
+                Assert.That(next.Length, Is.EqualTo(exPerf.Length));
+            }
 
             [Test]
             [Category("intensive")]

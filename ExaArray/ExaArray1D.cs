@@ -156,6 +156,9 @@ namespace Exa
                         break;
                 }
                 
+                if (chunkIndex >= this.chunks.Length || elementIndex >= this.chunks[chunkIndex].Length)
+                    throw new IndexOutOfRangeException();
+                
                 return this.chunks[chunkIndex][elementIndex];
             }
 

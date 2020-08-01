@@ -509,6 +509,7 @@ namespace ExaArrayTests
                 
                 var exPerf = new ExaArray1D<byte>(Strategy.MAX_PERFORMANCE);
                 exPerf.Extend(3 * MAX + 3); // more than one chunk
+                exPerf[100_000_000] = 0xFF;
                 exPerf[3 * MAX - 1 + 2] = 0x01;
                 exPerf[3 * MAX - 1 + 1] = 0x02;
                 exPerf[3 * MAX - 1 - 0] = 0x03;
@@ -518,12 +519,14 @@ namespace ExaArrayTests
                 exPerf[3 * MAX - 1 - 4] = 0x07;
 
                 var next = ExaArray1D<byte>.CreateFrom(exPerf, 100_000_000, 3 * MAX - 1 + 2);
-                Assert.That(next.Length, Is.EqualTo(5));
-                Assert.That(next[100_000_000], Is.EqualTo(exPerf[3 * MAX - 1 - 2]));
-                Assert.That(next[100_000_001], Is.EqualTo(exPerf[3 * MAX - 1 - 1]));
-                Assert.That(next[100_000_002], Is.EqualTo(exPerf[3 * MAX - 1 - 0]));
-                Assert.That(next[100_000_003], Is.EqualTo(exPerf[3 * MAX - 1 + 1]));
-                Assert.That(next[100_000_004], Is.EqualTo(exPerf[3 * MAX - 1 + 2]));
+                Assert.That(next.Length, Is.EqualTo(exPerf.Length - 100_000_000 - 1));
+                Assert.That(next[0], Is.EqualTo(0xFF));
+                
+                Assert.That(next[next.Length - 1 - 4], Is.EqualTo(exPerf[3 * MAX - 1 - 2]));
+                Assert.That(next[next.Length - 1 - 3], Is.EqualTo(exPerf[3 * MAX - 1 - 1]));
+                Assert.That(next[next.Length - 1 - 2], Is.EqualTo(exPerf[3 * MAX - 1 - 0]));
+                Assert.That(next[next.Length - 1 - 1], Is.EqualTo(exPerf[3 * MAX - 1 + 1]));
+                Assert.That(next[next.Length - 1 - 0], Is.EqualTo(exPerf[3 * MAX - 1 + 2]));
             }
 
             [Test]

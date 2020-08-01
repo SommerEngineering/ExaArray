@@ -13,6 +13,11 @@ namespace ExaArrayTests
         [ExcludeFromCodeCoverage]
         public class InfinityArrayTests
         {
+            private class TestClass
+            {
+                public int Age { get; set; }
+            }
+            
             [Test]
             [Category("cover")]
             [Category("normal")]
@@ -300,6 +305,225 @@ namespace ExaArrayTests
                 var exElem = new ExaArray1D<byte>(Strategy.MAX_ELEMENTS);
                 next = ExaArray1D<byte>.CreateFrom(exElem);
                 Assert.That(next.Length, Is.EqualTo(0));
+            }
+            
+            [Test]
+            [Category("normal")]
+            [Category("cover")]
+            public void CreateFrom005Objects()
+            {
+                var exPerf = new ExaArray1D<TestClass>();
+                exPerf.Extend(3);
+                exPerf[0] = new TestClass{Age = 5};
+                exPerf[1] = new TestClass{Age = 10};
+                exPerf[2] = new TestClass{Age = 45};
+
+                var next = ExaArray1D<TestClass>.CreateFrom(exPerf);
+                Assert.That(next.Length, Is.EqualTo(3));
+                Assert.That(next[1].Age, Is.EqualTo(10));
+
+                next[1].Age = 50;
+                Assert.That(next[1].Age, Is.EqualTo(50));
+                Assert.That(exPerf[1].Age, Is.EqualTo(50));
+            }
+            
+            [Test]
+            [Category("normal")]
+            [Category("cover")]
+            public void CreateFromRange001()
+            {
+                var exPerf = new ExaArray1D<byte>(Strategy.MAX_PERFORMANCE);
+                exPerf.Extend(3);
+                exPerf[0] = 0x01;
+                exPerf[1] = 0x02;
+                exPerf[2] = 0x03;
+                
+                var next = ExaArray1D<byte>.CreateFrom(exPerf, 0, 1);
+                Assert.That(next.Length, Is.EqualTo(2));
+                Assert.That(next[0], Is.EqualTo(exPerf[0]));
+                Assert.That(next[1], Is.EqualTo(exPerf[1]));
+                Assert.That(next.OptimizationStrategy, Is.EqualTo(exPerf.OptimizationStrategy));
+                
+                exPerf = null;
+                next = null;
+                
+                var exElem = new ExaArray1D<byte>(Strategy.MAX_ELEMENTS);
+                exElem.Extend(3);
+                exElem[0] = 0x01;
+                exElem[1] = 0x02;
+                exElem[2] = 0x03;
+                
+                next = ExaArray1D<byte>.CreateFrom(exElem, 1, 2);
+                Assert.That(next.Length, Is.EqualTo(2));
+                Assert.That(next[0], Is.EqualTo(exElem[1]));
+                Assert.That(next[1], Is.EqualTo(exElem[2]));
+                Assert.That(next.OptimizationStrategy, Is.EqualTo(exElem.OptimizationStrategy));
+            }
+            
+            [Test]
+            [Category("normal")]
+            [Category("cover")]
+            public void CreateFromRange002()
+            {
+                var exPerf = new ExaArray1D<byte>(Strategy.MAX_PERFORMANCE);
+                exPerf.Extend(3);
+                exPerf[0] = 0x01;
+                exPerf[1] = 0x02;
+                exPerf[2] = 0x03;
+
+                Assert.Throws<IndexOutOfRangeException>(() =>
+                {
+                    var next = ExaArray1D<byte>.CreateFrom(exPerf, 100, 200);
+                });
+            }
+            
+            [Test]
+            [Category("normal")]
+            [Category("cover")]
+            public void CreateFromRange003()
+            {
+                var exPerf = new ExaArray1D<byte>(Strategy.MAX_PERFORMANCE);
+                exPerf.Extend(3);
+                exPerf[0] = 0x01;
+                exPerf[1] = 0x02;
+                exPerf[2] = 0x03;
+
+                Assert.Throws<IndexOutOfRangeException>(() =>
+                {
+                    var next = ExaArray1D<byte>.CreateFrom(exPerf, 0, 200);
+                });
+            }
+            
+            [Test]
+            [Category("normal")]
+            [Category("cover")]
+            public void CreateFromRange004()
+            {
+                var exPerf = new ExaArray1D<byte>(Strategy.MAX_PERFORMANCE);
+                exPerf.Extend(3);
+                exPerf[0] = 0x01;
+                exPerf[1] = 0x02;
+                exPerf[2] = 0x03;
+
+                Assert.Throws<IndexOutOfRangeException>(() =>
+                {
+                    var next = ExaArray1D<byte>.CreateFrom(exPerf, 200, 100);
+                });
+            }
+            
+            [Test]
+            [Category("normal")]
+            [Category("cover")]
+            public void CreateFromRange005()
+            {
+                var exPerf = new ExaArray1D<byte>(Strategy.MAX_ELEMENTS);
+                exPerf.Extend(3);
+                exPerf[0] = 0x01;
+                exPerf[1] = 0x02;
+                exPerf[2] = 0x03;
+
+                var next = ExaArray1D<byte>.CreateFrom(exPerf, 2, 2);
+                Assert.That(next.Length, Is.EqualTo(1));
+                Assert.That(next.OptimizationStrategy, Is.EqualTo(Strategy.MAX_ELEMENTS));
+                Assert.That(next[0], Is.EqualTo(exPerf[2]));
+            }
+            
+            [Test]
+            [Category("normal")]
+            [Category("cover")]
+            public void CreateFromRange006Objects()
+            {
+                var exPerf = new ExaArray1D<TestClass>();
+                exPerf.Extend(3);
+                exPerf[0] = new TestClass{Age = 5};
+                exPerf[1] = new TestClass{Age = 10};
+                exPerf[2] = new TestClass{Age = 45};
+
+                var next = ExaArray1D<TestClass>.CreateFrom(exPerf, 2, 2);
+                Assert.That(next.Length, Is.EqualTo(1));
+                Assert.That(next[0].Age, Is.EqualTo(45));
+
+                next[0].Age = 50;
+                Assert.That(next[0].Age, Is.EqualTo(50));
+                Assert.That(exPerf[2].Age, Is.EqualTo(50));
+            }
+            
+            [Test]
+            [Category("normal")]
+            [Category("cover")]
+            public void CreateFromRange007()
+            {
+                const uint MAX = 1_073_741_824;
+                
+                var exPerf = new ExaArray1D<byte>(Strategy.MAX_PERFORMANCE);
+                exPerf.Extend(MAX + 3); // more than one chunk
+                exPerf[MAX - 1 + 2] = 0x01;
+                exPerf[MAX - 1 + 1] = 0x02;
+                exPerf[MAX - 1 - 0] = 0x03;
+                exPerf[MAX - 1 - 1] = 0x04;
+                exPerf[MAX - 1 - 2] = 0x05;
+                exPerf[MAX - 1 - 3] = 0x06;
+                exPerf[MAX - 1 - 4] = 0x07;
+
+                var next = ExaArray1D<byte>.CreateFrom(exPerf, MAX - 1 - 2, MAX - 1 + 2);
+                Assert.That(next.Length, Is.EqualTo(5));
+                Assert.That(next[0], Is.EqualTo(exPerf[MAX - 1 - 2]));
+                Assert.That(next[1], Is.EqualTo(exPerf[MAX - 1 - 1]));
+                Assert.That(next[2], Is.EqualTo(exPerf[MAX - 1 - 0]));
+                Assert.That(next[3], Is.EqualTo(exPerf[MAX - 1 + 1]));
+                Assert.That(next[4], Is.EqualTo(exPerf[MAX - 1 + 2]));
+            }
+            
+            [Test]
+            [Category("normal")]
+            [Category("cover")]
+            public void CreateFromRange008()
+            {
+                const uint MAX = 1_073_741_824;
+                
+                var exPerf = new ExaArray1D<byte>(Strategy.MAX_PERFORMANCE);
+                exPerf.Extend(3 * MAX + 3); // more than one chunk
+                exPerf[MAX - 1 + 2] = 0x01;
+                exPerf[MAX - 1 + 1] = 0x02;
+                exPerf[MAX - 1 - 0] = 0x03;
+                exPerf[MAX - 1 - 1] = 0x04;
+                exPerf[MAX - 1 - 2] = 0x05;
+                exPerf[MAX - 1 - 3] = 0x06;
+                exPerf[MAX - 1 - 4] = 0x07;
+
+                var next = ExaArray1D<byte>.CreateFrom(exPerf, MAX - 1 - 2, MAX - 1 + 2);
+                Assert.That(next.Length, Is.EqualTo(5));
+                Assert.That(next[0], Is.EqualTo(exPerf[MAX - 1 - 2]));
+                Assert.That(next[1], Is.EqualTo(exPerf[MAX - 1 - 1]));
+                Assert.That(next[2], Is.EqualTo(exPerf[MAX - 1 - 0]));
+                Assert.That(next[3], Is.EqualTo(exPerf[MAX - 1 + 1]));
+                Assert.That(next[4], Is.EqualTo(exPerf[MAX - 1 + 2]));
+            }
+            
+            [Test]
+            [Category("normal")]
+            [Category("cover")]
+            public void CreateFromRange009()
+            {
+                const uint MAX = 1_073_741_824;
+                
+                var exPerf = new ExaArray1D<byte>(Strategy.MAX_PERFORMANCE);
+                exPerf.Extend(3 * MAX + 3); // more than one chunk
+                exPerf[3 * MAX - 1 + 2] = 0x01;
+                exPerf[3 * MAX - 1 + 1] = 0x02;
+                exPerf[3 * MAX - 1 - 0] = 0x03;
+                exPerf[3 * MAX - 1 - 1] = 0x04;
+                exPerf[3 * MAX - 1 - 2] = 0x05;
+                exPerf[3 * MAX - 1 - 3] = 0x06;
+                exPerf[3 * MAX - 1 - 4] = 0x07;
+
+                var next = ExaArray1D<byte>.CreateFrom(exPerf, 100_000_000, 3 * MAX - 1 + 2);
+                Assert.That(next.Length, Is.EqualTo(5));
+                Assert.That(next[100_000_000], Is.EqualTo(exPerf[3 * MAX - 1 - 2]));
+                Assert.That(next[100_000_001], Is.EqualTo(exPerf[3 * MAX - 1 - 1]));
+                Assert.That(next[100_000_002], Is.EqualTo(exPerf[3 * MAX - 1 - 0]));
+                Assert.That(next[100_000_003], Is.EqualTo(exPerf[3 * MAX - 1 + 1]));
+                Assert.That(next[100_000_004], Is.EqualTo(exPerf[3 * MAX - 1 + 2]));
             }
 
             [Test]

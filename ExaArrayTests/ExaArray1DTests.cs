@@ -59,6 +59,34 @@ namespace ExaArrayTests
 
             [Test]
             [Category("normal")]
+            [Category("cover")]
+            public void ExtendingTooFar01()
+            {
+                var exaA = new ExaArray1D<byte>();
+                Assert.Throws<ArgumentOutOfRangeException>(() =>
+                {
+                    // Cannot handle more than 1.1 quintillion elements: 
+                    exaA.Extend(ulong.MaxValue);
+                });
+            }
+
+            [Test]
+            [Category("normal")]
+            [Category("cover")]
+            public void ExtendingToEndFirstChunk01()
+            {
+                const uint MAX = 1_073_741_824;
+                var exaA = new ExaArray1D<byte>(Strategy.MAX_PERFORMANCE);
+                exaA.Extend(MAX-2);
+                
+                Assert.That(exaA.Length, Is.EqualTo(MAX-2));
+                
+                exaA.Extend(2);
+                Assert.That(exaA.Length, Is.EqualTo(MAX));
+            }
+
+            [Test]
+            [Category("normal")]
             public void CountingHugeSize01()
             {
                 var exaA = new ExaArray1D<byte>();

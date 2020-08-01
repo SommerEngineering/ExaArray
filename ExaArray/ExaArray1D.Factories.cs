@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Exa
 {
@@ -183,6 +184,82 @@ namespace Exa
 
             } while (leftOverTotal > 0);
             return next;
+        }
+
+        /// <summary>
+        /// Creates a new ExaArray1D from an enumerable sequence of items. The number of items in the sequence is __unknown__.
+        /// </summary>
+        /// <remarks>
+        /// This factory method is slow because the number of items in the sequence is unknown. When you know the
+        /// number of items, you should use another factory method, where the number of items can be provided.
+        ///
+        /// Performance: O(n)
+        /// </remarks>
+        /// <param name="sequence">The sequence to consume in order to create the array.</param>
+        /// <param name="strategy">The optional optimization strategy.</param>
+        /// <returns>The desired instance</returns>
+        public static ExaArray1D<T> CreateFrom(IEnumerable<T> sequence, Strategy strategy = Strategy.MAX_PERFORMANCE)
+        {
+            var inst = new ExaArray1D<T>(strategy);
+            ulong position = 0;
+            foreach (var element in sequence)
+            {
+                inst.Extend();
+                inst[position++] = element;
+            }
+
+            return inst;
+        }
+
+        /// <summary>
+        /// Creates a new ExaArray1D from an enumerable sequence of items. The number of items in the sequence is __known__.
+        /// </summary>
+        /// <remarks>
+        /// Creates an array with <c>length</c> items. When the sequence contains less elements, the remaining values are <c>default(T)</c>. 
+        /// When the sequence contains more elements, these additional elements getting ignored.
+        /// 
+        /// Performance: O(n)
+        /// </remarks>
+        /// <param name="sequence">The sequence to consume in order to create the array.</param>
+        /// <param name="length">The number of elements in the sequence. When the sequence contains more elements, these additional elements are ignored.</param>
+        /// <param name="strategy">The optional optimization strategy.</param>
+        /// <returns>The desired instance</returns>
+        public static ExaArray1D<T> CreateFrom(IEnumerable<T> sequence, ulong length, Strategy strategy = Strategy.MAX_PERFORMANCE)
+        {
+            var inst = new ExaArray1D<T>(strategy);
+            inst.Extend(length);
+            
+            ulong position = 0;
+            foreach (var element in sequence)
+            {
+                if(position == length)
+                    break;
+
+                inst[position++] = element;
+            }
+
+            return inst;
+        }
+
+        /// <summary>
+        /// Creates a new ExaArray1D from a collection of items.
+        /// </summary>
+        /// <remarks>
+        /// Performance: O(n)
+        /// </remarks>
+        /// <param name="collection">The collection to use</param>
+        /// <param name="strategy">The optional optimization strategy.</param>
+        /// <returns>The desired instance</returns>
+        public static ExaArray1D<T> CreateFrom(ICollection<T> collection, Strategy strategy = Strategy.MAX_PERFORMANCE)
+        {
+            var inst = new ExaArray1D<T>(strategy);
+            inst.Extend((ulong) collection.Count);
+            
+            ulong position = 0;
+            foreach (var element in collection)
+                inst[position++] = element;
+
+            return inst;
         }
     }
 }

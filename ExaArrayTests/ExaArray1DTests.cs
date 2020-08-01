@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -548,6 +549,111 @@ namespace ExaArrayTests
                 Assert.That(next2.Length, Is.EqualTo(exPerf.Length));
                 Assert.That(next3.Length, Is.EqualTo(exPerf.Length));
                 Assert.That(next4.Length, Is.EqualTo(exPerf.Length));
+            }
+            
+            [Test]
+            [Category("normal")]
+            [Category("cover")]
+            public void CreateFromSequence001()
+            {
+                var list = new List<int>
+                {
+                    5,
+                    7,
+                    8,
+                    10,
+                    16,
+                };
+
+                var exPerf1 = list.AsExaArray();
+                Assert.That(exPerf1.OptimizationStrategy, Is.EqualTo(Strategy.MAX_PERFORMANCE));
+                Assert.That(exPerf1.Length, Is.EqualTo(list.Count));
+                Assert.That(exPerf1.Items(), Is.EquivalentTo(list));
+                
+                var exPerf2 = list.AsExaArray(Strategy.MAX_ELEMENTS);
+                Assert.That(exPerf2.OptimizationStrategy, Is.EqualTo(Strategy.MAX_ELEMENTS));
+                Assert.That(exPerf2.Length, Is.EqualTo(list.Count));
+                Assert.That(exPerf2.Items(), Is.EquivalentTo(list));
+            }
+            
+            [Test]
+            [Category("normal")]
+            [Category("cover")]
+            public void CreateFromSequence002()
+            {
+                var array = new int[]
+                {
+                    5,
+                    7,
+                    8,
+                    10,
+                    16,
+                };
+
+                var exPerf1 = array.AsExaArray();
+                Assert.That(exPerf1.OptimizationStrategy, Is.EqualTo(Strategy.MAX_PERFORMANCE));
+                Assert.That(exPerf1.Length, Is.EqualTo(array.Length));
+                Assert.That(exPerf1.Items(), Is.EquivalentTo(array));
+                
+                var exPerf2 = array.AsExaArray(Strategy.MAX_ELEMENTS);
+                Assert.That(exPerf2.OptimizationStrategy, Is.EqualTo(Strategy.MAX_ELEMENTS));
+                Assert.That(exPerf2.Length, Is.EqualTo(array.Length));
+                Assert.That(exPerf2.Items(), Is.EquivalentTo(array));
+            }
+            
+            [Test]
+            [Category("normal")]
+            [Category("cover")]
+            public void CreateFromSequence003()
+            {
+                var list = new List<int>
+                {
+                    5,
+                    7,
+                    8,
+                    10,
+                    16,
+                };
+
+                var exPerf1 = list.AsEnumerable().AsExaArray();
+                Assert.That(exPerf1.OptimizationStrategy, Is.EqualTo(Strategy.MAX_PERFORMANCE));
+                Assert.That(exPerf1.Length, Is.EqualTo(list.Count));
+                Assert.That(exPerf1.Items(), Is.EquivalentTo(list));
+                
+                var exPerf2 = list.AsEnumerable().AsExaArray(Strategy.MAX_ELEMENTS);
+                Assert.That(exPerf2.OptimizationStrategy, Is.EqualTo(Strategy.MAX_ELEMENTS));
+                Assert.That(exPerf2.Length, Is.EqualTo(list.Count));
+                Assert.That(exPerf2.Items(), Is.EquivalentTo(list));
+            }
+            
+            [Test]
+            [Category("normal")]
+            [Category("cover")]
+            public void CreateFromSequence004()
+            {
+                var list = new List<int>
+                {
+                    5,
+                    7,
+                    8,
+                    10,
+                    16,
+                };
+
+                var exPerf1 = list.AsEnumerable().AsExaArray((ulong) list.Count);
+                Assert.That(exPerf1.OptimizationStrategy, Is.EqualTo(Strategy.MAX_PERFORMANCE));
+                Assert.That(exPerf1.Length, Is.EqualTo(list.Count));
+                Assert.That(exPerf1.Items(), Is.EquivalentTo(list));
+                
+                var exPerf2 = list.AsEnumerable().AsExaArray((ulong) list.Count, Strategy.MAX_ELEMENTS);
+                Assert.That(exPerf2.OptimizationStrategy, Is.EqualTo(Strategy.MAX_ELEMENTS));
+                Assert.That(exPerf2.Length, Is.EqualTo(list.Count));
+                Assert.That(exPerf2.Items(), Is.EquivalentTo(list));
+                
+                var exPerf3 = list.AsEnumerable().AsExaArray(3);
+                Assert.That(exPerf3.OptimizationStrategy, Is.EqualTo(Strategy.MAX_PERFORMANCE));
+                Assert.That(exPerf3.Length, Is.EqualTo(3));
+                Assert.That(exPerf3.Items(), Is.EquivalentTo(new int[] {5,7,8}));
             }
 
             [Test]

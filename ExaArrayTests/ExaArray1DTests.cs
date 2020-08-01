@@ -87,6 +87,100 @@ namespace ExaArrayTests
 
             [Test]
             [Category("normal")]
+            [Category("cover")]
+            public void GetInvalidIndex01()
+            {
+                var exaPerf = new ExaArray1D<byte>(Strategy.MAX_PERFORMANCE);
+                exaPerf.Extend(2);
+                
+                Assert.Throws<IndexOutOfRangeException>(() =>
+                {
+                    var t = exaPerf[ulong.MaxValue]; // Because index >= max
+                });
+                
+                Assert.DoesNotThrow(() =>
+                {
+                    var t1 = exaPerf[0];
+                    var t2 = exaPerf[1];
+                });
+                
+                Assert.Throws<IndexOutOfRangeException>(() =>
+                {
+                    var t = exaPerf[2]; // Because we don't allocate
+                });
+
+                exaPerf = null;
+                
+                
+                var exaElem = new ExaArray1D<byte>(Strategy.MAX_ELEMENTS);
+                exaElem.Extend(2);
+                
+                Assert.Throws<IndexOutOfRangeException>(() =>
+                {
+                    var t = exaElem[ulong.MaxValue]; // Because index >= max
+                });
+                
+                Assert.DoesNotThrow(() =>
+                {
+                    var t1 = exaElem[0];
+                    var t2 = exaElem[1];
+                });
+                
+                Assert.Throws<IndexOutOfRangeException>(() =>
+                {
+                    var t = exaElem[2]; // Because we don't allocate
+                });
+            }
+            
+            [Test]
+            [Category("normal")]
+            [Category("cover")]
+            public void SetInvalidIndex01()
+            {
+                var exaPerf = new ExaArray1D<byte>(Strategy.MAX_PERFORMANCE);
+                exaPerf.Extend(2);
+                
+                Assert.Throws<IndexOutOfRangeException>(() =>
+                {
+                    exaPerf[ulong.MaxValue] = 0x00; // Because index >= max
+                });
+                
+                Assert.DoesNotThrow(() =>
+                {
+                    exaPerf[0] = 0x01;
+                    exaPerf[1] = 0x02;
+                });
+                
+                Assert.Throws<IndexOutOfRangeException>(() =>
+                {
+                    var t = exaPerf[2] = 0x03; // Because we don't allocate
+                });
+                
+                exaPerf = null;
+                
+                
+                var exaElem = new ExaArray1D<byte>(Strategy.MAX_ELEMENTS);
+                exaElem.Extend(2);
+                
+                Assert.Throws<IndexOutOfRangeException>(() =>
+                {
+                    exaElem[ulong.MaxValue] = 0x00; // Because index >= max
+                });
+                
+                Assert.DoesNotThrow(() =>
+                {
+                    exaElem[0] = 0x01;
+                    exaElem[1] = 0x02;
+                });
+                
+                Assert.Throws<IndexOutOfRangeException>(() =>
+                {
+                    exaElem[2] = 0x03; // Because we don't allocate
+                });
+            }
+
+            [Test]
+            [Category("normal")]
             public void CountingHugeSize01()
             {
                 var exaA = new ExaArray1D<byte>();

@@ -21,7 +21,7 @@ namespace Exa
         public static ExaArray1D<T> Clone<T>(this ExaArray1D<T> other) => ExaArray1D<T>.CreateFrom(other);
 
         /// <summary>
-        /// Creates a new ExaArray1D from another, respecting the given range.
+        /// Creates a new ExaArray1D from this instance, respecting the given range.
         /// </summary>
         /// <remarks>
         /// When <c>T</c> is a value type, data gets copied as values. When <c>T</c> is a reference type, the pointers

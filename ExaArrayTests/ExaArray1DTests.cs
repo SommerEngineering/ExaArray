@@ -539,13 +539,15 @@ namespace ExaArrayTests
                 var exPerf = new ExaArray1D<byte>(Strategy.MAX_PERFORMANCE);
                 exPerf.Extend(3 * MAX); // more than one chunk
                 
-                var next = ExaArray1D<byte>.CreateFrom(exPerf, 0, exPerf.Length - 1);
+                var next1 = ExaArray1D<byte>.CreateFrom(exPerf, 0, exPerf.Length - 1);
                 var next2 = exPerf.Clone();
                 var next3 = exPerf.Clone(0, exPerf.Length - 1);
+                var next4 = exPerf[0, exPerf.Length - 1];
                 
-                Assert.That(next.Length, Is.EqualTo(exPerf.Length));
+                Assert.That(next1.Length, Is.EqualTo(exPerf.Length));
                 Assert.That(next2.Length, Is.EqualTo(exPerf.Length));
                 Assert.That(next3.Length, Is.EqualTo(exPerf.Length));
+                Assert.That(next4.Length, Is.EqualTo(exPerf.Length));
             }
 
             [Test]

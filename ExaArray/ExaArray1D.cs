@@ -189,6 +189,23 @@ namespace Exa
         }
 
         /// <summary>
+        /// Creates a new ExaArray1D from this instance, respecting the given range.
+        /// </summary>
+        /// <remarks>
+        /// When <c>T</c> is a value type, data gets copied as values. When <c>T</c> is a reference type, the pointers
+        /// to the original objects are copied. Thus, this factory method does not create a deep copy.
+        ///
+        /// Performance: O(n)
+        ///
+        /// The indices are inclusive.
+        /// </remarks>
+        /// <param name="indexFrom">The first source element which should be part of the new array.</param>
+        /// <param name="indexTo">The last source element which should be part of the new array.</param>
+        /// <returns>The new instance</returns>
+        /// <exception cref="IndexOutOfRangeException">Throws, when one or both of the indices are out of range.</exception>
+        public ExaArray1D<T> this[ulong indexFrom, ulong indexTo] => ExaArray1D<T>.CreateFrom(this, indexFrom, indexTo);
+
+        /// <summary>
         /// Yields an enumerator across all elements.
         /// </summary>
         /// <remarks>

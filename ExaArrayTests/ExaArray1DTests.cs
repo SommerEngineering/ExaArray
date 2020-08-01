@@ -14,6 +14,8 @@ namespace ExaArrayTests
         public class InfinityArrayTests
         {
             [Test]
+            [Category("cover")]
+            [Category("normal")]
             public void CreatingNormalSize01()
             {
                 var exaA = new ExaArray1D<byte>();
@@ -36,6 +38,8 @@ namespace ExaArrayTests
             }
 
             [Test]
+            [Category("cover")]
+            [Category("normal")]
             public void CreatingNormalSize02()
             {
                 var exaA = new ExaArray1D<int>();
@@ -54,6 +58,7 @@ namespace ExaArrayTests
             }
 
             [Test]
+            [Category("normal")]
             public void CountingHugeSize01()
             {
                 var exaA = new ExaArray1D<byte>();
@@ -68,6 +73,7 @@ namespace ExaArrayTests
             }
 
             [Test]
+            [Category("intensive")]
             public void Adding5Billion01()
             {
                 ulong sum1 = 0;
@@ -86,6 +92,8 @@ namespace ExaArrayTests
             }
             
             [Test]
+            [Category("cover")]
+            [Category("normal")]
             public void Using5Billion01()
             {
                 var exaA = new ExaArray1D<byte>();
@@ -94,6 +102,8 @@ namespace ExaArrayTests
             }
             
             [Test]
+            [Category("cover")]
+            [Category("normal")]
             public void TestStrategies01()
             {
                 var exaA = new ExaArray1D<byte>();
@@ -107,6 +117,7 @@ namespace ExaArrayTests
             }
 
             [Test]
+            [Category("performance")]
             public void TestPerformance01()
             {
                 var t1Times = new long[10];

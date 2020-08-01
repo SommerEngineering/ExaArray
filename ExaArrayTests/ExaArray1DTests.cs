@@ -180,7 +180,7 @@ namespace ExaArrayTests
             }
 
             [Test]
-            [Category("normal")]
+            [Category("intensive")]
             public void CountingHugeSize01()
             {
                 var exaA = new ExaArray1D<byte>();
@@ -192,6 +192,114 @@ namespace ExaArrayTests
                     // Cannot work because linq uses int:
                     var n = exaA.Items().Count();
                 });
+            }
+
+            [Test]
+            [Category("normal")]
+            [Category("cover")]
+            public void CreateFrom001()
+            {
+                var exPerf = new ExaArray1D<byte>(Strategy.MAX_PERFORMANCE);
+                exPerf.Extend(2);
+                exPerf[0] = 0x01;
+                exPerf[1] = 0x02;
+
+                var next = ExaArray1D<byte>.CreateFrom(exPerf);
+                Assert.That(next.Length, Is.EqualTo(exPerf.Length));
+                Assert.That(next.OptimizationStrategy, Is.EqualTo(exPerf.OptimizationStrategy));
+                Assert.That(next.Items(), Is.EquivalentTo(exPerf.Items()));
+
+                exPerf = null;
+                next = null;
+                
+                var exElem = new ExaArray1D<byte>(Strategy.MAX_ELEMENTS);
+                exElem.Extend(2);
+                exElem[0] = 0x03;
+                exElem[1] = 0x04;
+
+                next = ExaArray1D<byte>.CreateFrom(exElem);
+                Assert.That(next.Length, Is.EqualTo(exElem.Length));
+                Assert.That(next.OptimizationStrategy, Is.EqualTo(exElem.OptimizationStrategy));
+                Assert.That(next.Items(), Is.EquivalentTo(exElem.Items()));
+            }
+            
+            [Test]
+            [Category("normal")]
+            [Category("cover")]
+            public void CreateFrom002Objects()
+            {
+                var exPerf = new ExaArray1D<object>(Strategy.MAX_PERFORMANCE);
+                exPerf.Extend(2);
+                exPerf[0] = new object();
+                exPerf[1] = new object();
+
+                var next = ExaArray1D<object>.CreateFrom(exPerf);
+                Assert.That(next.Length, Is.EqualTo(exPerf.Length));
+                Assert.That(next.OptimizationStrategy, Is.EqualTo(exPerf.OptimizationStrategy));
+                Assert.That(next[0], Is.SameAs(exPerf[0]));
+                Assert.That(next[1], Is.SameAs(exPerf[1]));
+                Assert.That(next[0], Is.Not.SameAs(next[1]));
+
+                exPerf = null;
+                next = null;
+                
+                var exElem = new ExaArray1D<object>(Strategy.MAX_ELEMENTS);
+                exElem.Extend(2);
+                exElem[0] = new object();
+                exElem[1] = new object();
+
+                next = ExaArray1D<object>.CreateFrom(exElem);
+                Assert.That(next.Length, Is.EqualTo(exElem.Length));
+                Assert.That(next.OptimizationStrategy, Is.EqualTo(exElem.OptimizationStrategy));
+                Assert.That(next[0], Is.SameAs(exElem[0]));
+                Assert.That(next[1], Is.SameAs(exElem[1]));
+                Assert.That(next[0], Is.Not.SameAs(next[1]));
+            }
+            
+            [Test]
+            [Category("normal")]
+            [Category("cover")]
+            public void CreateFrom003()
+            {
+                var exPerf = new ExaArray1D<byte>(Strategy.MAX_PERFORMANCE);
+                exPerf.Extend(5_000_000_000); // more than one chunk
+                
+                var next = ExaArray1D<byte>.CreateFrom(exPerf);
+                Assert.That(next.Length, Is.EqualTo(exPerf.Length));
+                Assert.DoesNotThrow(() =>
+                {
+                    next[4_999_999_999] = 0xab;
+                });
+
+                exPerf = null;
+                next = null;
+                
+                var exElem = new ExaArray1D<byte>(Strategy.MAX_ELEMENTS);
+                exElem.Extend(5_000_000_000);
+                
+                next = ExaArray1D<byte>.CreateFrom(exElem);
+                Assert.That(next.Length, Is.EqualTo(exElem.Length));
+                Assert.DoesNotThrow(() =>
+                {
+                    next[4_999_999_999] = 0xab;
+                });
+            }
+            
+            [Test]
+            [Category("normal")]
+            [Category("cover")]
+            public void CreateFrom004()
+            {
+                var exPerf = new ExaArray1D<byte>(Strategy.MAX_PERFORMANCE);
+                var next = ExaArray1D<byte>.CreateFrom(exPerf);
+                Assert.That(next.Length, Is.EqualTo(0));
+                
+                exPerf = null;
+                next = null;
+                
+                var exElem = new ExaArray1D<byte>(Strategy.MAX_ELEMENTS);
+                next = ExaArray1D<byte>.CreateFrom(exElem);
+                Assert.That(next.Length, Is.EqualTo(0));
             }
 
             [Test]

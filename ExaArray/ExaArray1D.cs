@@ -8,7 +8,7 @@ namespace Exa
     /// to 4.6 quintillion (4,607,183,514,018,780,000) or 4.6 exa elements. 
     /// </summary>
     /// <typeparam name="T">The desired type to use, e.g. byte, int, etc.</typeparam>
-    public sealed class ExaArray1D<T>
+    public sealed partial class ExaArray1D<T>
     {
         /// <summary>
         /// Unfortunately, this seems to be the maximal number of entries an

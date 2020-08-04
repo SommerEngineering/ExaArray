@@ -1,11 +1,14 @@
 using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Exa
 {
     /// <summary>
     /// The two-dimensional exa-scale array. Can grow up to 18,446,744,073,709,551,615 elements in total.
     /// </summary>
-    public sealed class ExaArray2D<T>
+    public sealed class ExaArray2D<T> : ISerializable
     {
         /// <summary>
         /// The total number of possible elements.
@@ -16,6 +19,13 @@ namespace Exa
         
         // Chunk storage:
         private readonly ExaArray1D<ExaArray1D<T>> chunks = new ExaArray1D<ExaArray1D<T>>(Strategy.MAX_PERFORMANCE);
+
+        /// <summary>
+        /// Constructs a two-dimensional exa-scale array.
+        /// </summary>
+        public ExaArray2D()
+        {
+        }
         
         /// <summary>
         /// Returns the current total number of elements across all dimensions. 
@@ -72,5 +82,61 @@ namespace Exa
                 this.chunks[indexAbscissa][indexOrdinate] = value;
             }
         }
+        
+        #region Store and load
+
+        /// <summary>
+        /// Stores the exa array into a stream.
+        /// </summary>
+        /// <remarks>
+        /// This method does not dispose the stream.
+        /// </remarks>
+        public void Store(Stream outputStream)
+        {
+            var formatter = new BinaryFormatter();
+            formatter.Serialize(outputStream, this);
+        }
+
+        /// <summary>
+        /// Restores an exa array from the given stream.
+        /// </summary>
+        /// <remarks>
+        /// This method does not dispose the stream.
+        /// </remarks>
+        public static ExaArray2D<T> Restore(Stream inputStream)
+        {
+            var formatter = new BinaryFormatter();
+            return formatter.Deserialize(inputStream) as ExaArray2D<T>;
+        }
+
+        #endregion
+        
+        #region Serialization
+
+        /// <summary>
+        /// This method serves for the serialization process. Do not call it manually. 
+        /// </summary>
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("version", "v1");
+            info.AddValue("length", this.Length);
+            info.AddValue("chunks", this.chunks, typeof(ExaArray1D<ExaArray1D<T>>));
+        }
+        
+        private ExaArray2D(SerializationInfo info, StreamingContext context)
+        {
+            switch (info.GetString("version"))
+            {
+                case "v1":
+                    this.sumLengthOrdinates = info.GetUInt64("length");
+                    this.chunks = info.GetValue("chunks", typeof(ExaArray1D<ExaArray1D<T>>)) as ExaArray1D<ExaArray1D<T>>;
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        #endregion
     }
 }

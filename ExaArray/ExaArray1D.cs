@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Exa
 {
@@ -8,7 +11,8 @@ namespace Exa
     /// to 4.6 quintillion (4,607,183,514,018,780,000) or 4.6 exa elements. 
     /// </summary>
     /// <typeparam name="T">The desired type to use, e.g. byte, int, etc.</typeparam>
-    public sealed partial class ExaArray1D<T>
+    [Serializable]
+    public sealed partial class ExaArray1D<T> : ISerializable
     {
         /// <summary>
         /// Unfortunately, this seems to be the maximal number of entries an
@@ -218,5 +222,64 @@ namespace Exa
             for (ulong n = 0; n < this.Length; n++)
                 yield return this[n];
         }
+
+        #region Store and load
+
+        /// <summary>
+        /// Stores the exa array into a stream.
+        /// </summary>
+        /// <remarks>
+        /// This method does not dispose the stream.
+        /// </remarks>
+        public void Store(Stream outputStream)
+        {
+            var formatter = new BinaryFormatter();
+            formatter.Serialize(outputStream, this);
+        }
+
+        /// <summary>
+        /// Restores an exa array from the given stream.
+        /// </summary>
+        /// <remarks>
+        /// This method does not dispose the stream.
+        /// </remarks>
+        public static ExaArray1D<T> Restore(Stream inputStream)
+        {
+            var formatter = new BinaryFormatter();
+            return formatter.Deserialize(inputStream) as ExaArray1D<T>;
+        }
+
+        #endregion
+
+        #region Serialization
+
+        /// <summary>
+        /// This method serves for the serialization process. Do not call it manually. 
+        /// </summary>
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("version", "v1");
+            info.AddValue("strategy", this.OptimizationStrategy, typeof(Strategy));
+            info.AddValue("length", this.Length);
+            info.AddValue("chunks", this.chunks, typeof(T[][]));
+        }
+        
+        private ExaArray1D(SerializationInfo info, StreamingContext context)
+        {
+            switch (info.GetString("version"))
+            {
+                case "v1":
+                    this.Length = info.GetUInt64("length");
+                    this.chunks = info.GetValue("chunks", typeof(T[][])) as T[][];
+                    this.OptimizationStrategy = (Strategy) info.GetValue("strategy", typeof(Strategy));
+                    break;
+            }
+
+            this.chunks[0] ??= new T[0];
+            this.maxElements = this.OptimizationStrategy == Strategy.MAX_PERFORMANCE ? MAX_NUMBER_ELEMENTS_PERFORMANCE : MAX_NUMBER_ELEMENTS;
+            this.maxArrayCapacity = this.OptimizationStrategy == Strategy.MAX_PERFORMANCE ? MAX_CAPACITY_ARRAY_PERFORMANCE : MAX_CAPACITY_ARRAY;
+        }
+
+        #endregion
     }
 }

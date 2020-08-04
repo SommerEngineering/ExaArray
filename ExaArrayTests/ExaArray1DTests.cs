@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Exa;
@@ -12,6 +13,7 @@ namespace ExaArrayTests
     [ExcludeFromCodeCoverage]
     public class ExaArray1DTests
     {
+        [Serializable]
         private class TestClass
         {
             public int Age { get; set; }
@@ -733,6 +735,63 @@ namespace ExaArrayTests
             }
 
             TestContext.WriteLine($"Performing 100M assignments took {t2Times.Average()} ms (average) by means of the max. performance strategy (min={t2Times.Min()} ms, max={t2Times.Max()} ms)");
+        }
+        
+        [Test]
+        [Category("cover")]
+        [Category("normal")]
+        public void StoreAndLoad01()
+        {
+            var exaA = new ExaArray1D<byte>();
+            exaA.Extend(5_000_000);
+            exaA[4_483_124] = 0xff;
+
+            var filename = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            using (var file = File.OpenWrite(filename))
+            {
+                exaA.Store(file);
+            }
+
+            using (var file = File.OpenRead(filename))
+            {
+                var exaB = ExaArray1D<byte>.Restore(file);
+                
+                Assert.That(exaA.Length, Is.EqualTo(exaB.Length));
+                Assert.That(exaA[4_483_124], Is.EqualTo(0xff));
+                Assert.That(exaB[4_483_124], Is.EqualTo(0xff));
+            }
+            
+            File.Delete(filename);
+        }
+        
+        [Test]
+        [Category("cover")]
+        [Category("normal")]
+        public void StoreAndLoad02()
+        {
+            var exaA = new ExaArray1D<TestClass>();
+            exaA.Extend(100);
+            exaA[66] = new TestClass
+            {
+                Age = 55,
+            };
+
+            var filename = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            using (var file = File.OpenWrite(filename))
+            {
+                exaA.Store(file);
+            }
+
+            using (var file = File.OpenRead(filename))
+            {
+                var exaB = ExaArray1D<TestClass>.Restore(file);
+                
+                Assert.That(exaA.Length, Is.EqualTo(exaB.Length));
+                Assert.That(exaA[66].Age, Is.EqualTo(55));
+                Assert.That(exaB[66].Age, Is.EqualTo(55));
+            }
+            
+            File.Delete(filename);
         }
     }
 }

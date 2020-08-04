@@ -47,7 +47,7 @@ namespace Exa
         {
             get
             {
-                if (indexAbscissa >= this.chunks.Length - 1 || indexOrdinate >= this.chunks[indexAbscissa]?.Length)
+                if (this.chunks.Length == 0 || indexAbscissa >= this.chunks.Length || indexOrdinate >= this.chunks[indexAbscissa]?.Length)
                     return default(T);
 
                 return this.chunks[indexAbscissa][indexOrdinate];
@@ -55,13 +55,13 @@ namespace Exa
 
             set
             {
-                if(indexAbscissa >= this.chunks.Length - 1)
+                if(this.chunks.Length == 0 || indexAbscissa >= this.chunks.Length)
                     this.chunks.Extend(indexAbscissa - this.chunks.Length + 1);
                 
                 this.chunks[indexAbscissa] ??= new ExaArray1D<T>(Strategy.MAX_PERFORMANCE);
-                if(indexOrdinate >= this.chunks[indexAbscissa].Length - 1)
+                if(this.chunks[indexAbscissa].Length == 0 || indexOrdinate >= this.chunks[indexAbscissa].Length - 1)
                 {
-                    var extendBy = indexOrdinate - this.chunks[indexAbscissa].Length + 1;
+                    var extendBy = (indexOrdinate - this.chunks[indexAbscissa].Length) + 1;
                     if(extendBy > MAX_NUMBER_ELEMENTS - this.sumLengthOrdinates)
                         throw new ArgumentOutOfRangeException($"It is not possible to extend more than {MAX_NUMBER_ELEMENTS} total elements across all dimensions.");
                     

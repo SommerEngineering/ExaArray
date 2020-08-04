@@ -15,7 +15,7 @@ namespace Exa
         private ulong sumLengthOrdinates = 0;
         
         // Chunk storage:
-        private ExaArray1D<ExaArray1D<T>> chunks = new ExaArray1D<ExaArray1D<T>>(Strategy.MAX_PERFORMANCE);
+        private readonly ExaArray1D<ExaArray1D<T>> chunks = new ExaArray1D<ExaArray1D<T>>(Strategy.MAX_PERFORMANCE);
         
         /// <summary>
         /// Returns the current total number of elements across all dimensions. 

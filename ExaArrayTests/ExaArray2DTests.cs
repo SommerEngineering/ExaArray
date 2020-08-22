@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using Exa;
 using NUnit.Framework;
 
@@ -71,6 +72,32 @@ namespace ExaArrayTests
             {
                 arr[1, UInt64.MaxValue - 1] = 6;
             });
+        }
+        
+        [Test]
+        [Category("cover")]
+        [Category("normal")]
+        public void StoreAndLoad01()
+        {
+            var exaA = new ExaArray2D<byte>();
+            exaA[5_000_124, 5_000_666] = 0xff;
+
+            var filename = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            using (var file = File.OpenWrite(filename))
+            {
+                exaA.Store(file);
+            }
+
+            using (var file = File.OpenRead(filename))
+            {
+                var exaB = ExaArray2D<byte>.Restore(file);
+                
+                Assert.That(exaA.Length, Is.EqualTo(exaB.Length));
+                Assert.That(exaA[5_000_124, 5_000_666], Is.EqualTo(0xff));
+                Assert.That(exaB[5_000_124, 5_000_666], Is.EqualTo(0xff));
+            }
+            
+            File.Delete(filename);
         }
     }
 }

@@ -8,6 +8,7 @@ namespace Exa
     /// <summary>
     /// The two-dimensional exa-scale array. Can grow up to 18,446,744,073,709,551,615 elements in total.
     /// </summary>
+    [Serializable]
     public sealed class ExaArray2D<T> : ISerializable
     {
         /// <summary>
@@ -86,9 +87,13 @@ namespace Exa
         #region Store and load
 
         /// <summary>
-        /// Stores the exa array into a stream.
+        /// Stores the exa array into a stream. <b>Please read the remarks regarding security issues.</b>
         /// </summary>
         /// <remarks>
+        /// The data stored in this way should never be part of a public API. Serializing and
+        /// deserializing is not secure: an attacker can manipulate the data in a targeted
+        /// manner to compromise the API server, etc.
+        ///
         /// This method does not dispose the stream.
         /// </remarks>
         public void Store(Stream outputStream)
@@ -98,9 +103,13 @@ namespace Exa
         }
 
         /// <summary>
-        /// Restores an exa array from the given stream.
+        /// Restores an exa array from the given stream. <b>Please read the remarks regarding security issues.</b>
         /// </summary>
         /// <remarks>
+        /// The data loaded in this way should never be part of a public API. Serializing and
+        /// deserializing is not secure: an attacker can manipulate the data in a targeted
+        /// manner to compromise the API server, etc.
+        /// 
         /// This method does not dispose the stream.
         /// </remarks>
         public static ExaArray2D<T> Restore(Stream inputStream)

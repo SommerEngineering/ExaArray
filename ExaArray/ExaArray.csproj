@@ -10,7 +10,7 @@
         <PackageProjectUrl>https://github.com/SommerEngineering/ExaArray</PackageProjectUrl>
         <PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
         <RepositoryUrl>https://code.tsommer.org/thorsten/ExaArray</RepositoryUrl>
-        <PackageVersion>1.4.1</PackageVersion>
+        <PackageVersion>1.4.1-rc</PackageVersion>
         <AssemblyVersion>1.4.1</AssemblyVersion>
         <FileVersion>1.4.1</FileVersion>
     </PropertyGroup>
